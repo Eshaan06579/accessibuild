@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>AccessiBuild</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- MODERN FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg1:#071c1f;
+  --bg2:#0b2c2f;
+  --glass:rgba(255,255,255,.08);
+  --primary:#14b8a6;
+  --accent:#fbbf24;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:var(--text);
+}
+
+/* NAVBAR */
+nav {
+  position:sticky;
+  top:0;
+  display:flex;
+  justify-content:space-between;
+  padding:1rem 2.5rem;
+  background:rgba(7,28,31,.9);
+  backdrop-filter:blur(12px);
+  z-index:10;
+}
+
+nav h1 {
+  font-family:Poppins,sans-serif;
+  color:var(--primary);
+  margin:0;
+}
+
+nav a {
+  color:var(--text);
+  margin-left:1.5rem;
+  text-decoration:none;
+}
+
+nav a:hover { color:var(--primary); }
+
+/* HERO */
+.hero {
+  min-height:90vh;
+  display:flex;
+  align-items:center;
+  padding:4rem 2.5rem;
+  background:
+    linear-gradient(90deg,rgba(7,28,31,.95),rgba(7,28,31,.6)),
+    url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d") center/cover;
+}
+
+.hero-content { max-width:720px; }
+
+.badge {
+  display:inline-block;
+  background:rgba(20,184,166,.2);
+  color:var(--primary);
+  padding:.4rem .8rem;
+  border-radius:999px;
+  margin-bottom:1rem;
+}
+
+.hero h2 {
+  font-family:Poppins,sans-serif;
+  font-size:clamp(2.8rem,5vw,3.8rem);
+  line-height:1.1;
+}
+
+.hero h2 span { color:var(--accent); }
+
+.hero p {
+  color:var(--muted);
+  max-width:560px;
+}
+
+/* SEARCH */
+.search {
+  margin-top:2rem;
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:16px;
+}
+
+.search input {
+  width:100%;
+  padding:1.2rem;
+  background:none;
+  border:none;
+  outline:none;
+  color:white;
+  font-size:1rem;
+}
+
+/* VENUES */
+section { padding:3rem 2.5rem; }
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;
+}
+
+.card {
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  padding:1.4rem;
+  transition:.2s;
+}
+
+.card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+
+.card h3 {
+  font-family:Poppins,sans-serif;
+  margin:0;
+}
+
+.tags { font-size:1.2rem; margin:.5rem 0; }
+
+.review {
+  font-size:.9rem;
+  color:var(--muted);
+  border-left:2px solid var(--primary);
+  padding-left:.6rem;
+  margin-top:.4rem;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h1>AccessiBuild</h1>
+  <div>
+    <a href="#">Home</a>
+    <a href="#venues">Explore Venues</a>
+    <a href="#">About</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="badge">♿ Inclusive Spaces</div>
+    <h2>Every space should be<br><span>welcome to everyone.</span></h2>
+    <p>Discover accessible venues with real reviews and real accessibility features.</p>
+
+    <div class="search">
+      <input id="search" placeholder="Search by name, category, accessibility, reviews…" />
+    </div>
+  </div>
+</section>
+
+<section id="venues">
+  <h2>Accessible Venues</h2>
+  <div id="grid" class="grid"></div>
+</section>
+
+<script>
+const venues=[
+ {name:"Central Library",cat:"Library",w:1,s:1,v:1,r:4.6,rev:["Quiet & accessible","Helpful staff"]},
+ {name:"Green Bean Cafe",cat:"Cafe",w:1,s:0,v:1,r:4.3,rev:["Easy access","Busy at lunch"]},
+ {name:"City Art Museum",cat:"Museum",w:1,s:1,v:0,r:4.8,rev:["Clear ramps","Sensory hours"]},
+ {name:"Riverside Park",cat:"Park",w:0,s:1,v:1,r:4.2,rev:["Peaceful","Uneven paths"]}
+];
+
+const grid=document.getElementById("grid");
+const search=document.getElementById("search");
+
+function render(list){
+ grid.innerHTML="";
+ list.forEach(v=>{
+  grid.innerHTML+=`
+   <div class="card">
+    <h3>${v.name}</h3>
+    <p>${v.cat} • ⭐ ${v.r}</p>
+    <div class="tags">${v.w?"♿":""}${v.s?"🔊":""}${v.v?"👁":""}</div>
+    ${v.rev.map(r=>`<div class="review">"${r}"</div>`).join("")}
+   </div>`;
+ });
+}
+
+search.oninput=e=>{
+ const q=e.target.value.toLowerCase();
+ render(venues.filter(v=>
+  v.name.toLowerCase().includes(q)||
+  v.cat.toLowerCase().includes(q)||
+  v.rev.join(" ").toLowerCase().includes(q)||
+  (q.includes("wheelchair")&&v.w)||
+  (q.includes("sensory")&&v.s)||
+  (q.includes("visual")&&v.v)
+ ));
+};
+
+render(venues);
+</script>
+
+</body>
+</html>
